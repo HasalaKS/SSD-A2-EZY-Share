@@ -10,3 +10,11 @@ router.route("/getAuthURL")
 
 router.route("/getToken")
     .post(GoogleDriveOauthCtrl.getToken)
+
+router.route("/uploadFile")
+    .post(GoogleDriveOauthCtrl.uploadFile)
+
+// Exports the routes
+module.exports = {
+    router
+}

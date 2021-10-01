@@ -3,7 +3,7 @@ const formidable = require("formidable");
 const fs = require("fs");
 
 // Import Client credentials
-const credentials = require("../credentials.json");
+const credentials = require("../googleDriveCredentials.json");
 const client_id = credentials.web.client_id;
 const client_secret = credentials.web.client_secret;
 const redirect_uris = credentials.web.redirect_uris;
@@ -40,7 +40,48 @@ const getToken = async (req, res) => {
     });
   };
 
-  module.exports = {
-    getAuthURL,
-    getToken
+// Upload the file
+const uploadFile = async (req, res) => {
+    var form = new formidable.IncomingForm();
+  
+    form.parse(req, (err, fields, files) => {
+      if (err) return res.status(400).send(err);  
+      const token = JSON.parse(fields.token);
+  
+      if (token == null) return res.status(400).send("Token not found");
+      oAuth2Client.setCredentials(token);
+    
+      const drive = google.drive({ version: "v3", auth: oAuth2Client });
+      const fileMetadata = {
+        name: files.file.name,
+      };
+  
+      const media = {
+        mimeType: files.file.type,
+        body: fs.createReadStream(files.file.path),
+      };
+  
+      drive.files.create(
+        {
+          resource: fileMetadata,
+          media: media,
+          fields: "id",
+        },
+        (err, file) => {
+          oAuth2Client.setCredentials(null);
+          if (err) {
+            res.status(400).send(err);
+          } else {
+            return res.send({ msg: "Successful" });
+          }
+        }
+      );
+    });
   };
+
+// Exports the methods
+module.exports = {
+    getAuthURL,
+    getToken,
+    uploadFile
+};
