@@ -5,7 +5,8 @@ const cors = require('cors');
 // Import Config
 const {port} = require("./config/config");
 
-// Importing routes
+// Import routes
+const facebookRoutes = require("./routes/facebook.routes");
 const googleriveRoutes = require("./routes/googleDrive.routes");
 
 // Initialize the app
@@ -16,7 +17,8 @@ app.use(cors());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
-// Configuring routes
+// Configure routes
+app.use("/api/facebook" , facebookRoutes.router);
 app.use("/api/googleDrive" , googleriveRoutes.router);
 
 // Web route
