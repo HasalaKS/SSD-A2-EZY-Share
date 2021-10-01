@@ -10,6 +10,9 @@ router.route("/getAuthURL")
 router.route("/getToken")
     .post(FacebookOauthCtrl.getToken)
 
+router.route("/getUserDeatils/:accessToken")
+    .get(FacebookOauthCtrl.getUserDeatils)
+    
 module.exports = {
     router
 }
