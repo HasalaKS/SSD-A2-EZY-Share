@@ -5,6 +5,9 @@ const cors = require('cors');
 // Import Config
 const {port} = require("./config/config");
 
+// Importing routes
+const googleriveRoutes = require("./routes/googleDrive.routes");
+
 // Initialize the app
 const app = express();
 
@@ -13,6 +16,8 @@ app.use(cors());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
+// Configuring routes
+app.use("/api/googleDrive" , googleriveRoutes.router);
 
 // Web route
 app.get("/" , (req,res) => {

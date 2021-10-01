@@ -17,3 +17,17 @@ const oAuth2Client = new google.auth.OAuth2(
 const SCOPE = [
   "https://www.googleapis.com/auth/drive.metadata.readonly https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/drive.file",
 ];
+
+// Get the authorizarion url
+const getAuthURL = async (req, res) => {
+    // generate the authorizarion url
+    const authUrl = oAuth2Client.generateAuthUrl({
+      access_type: "offline",
+      scope: SCOPE,
+    });
+    return res.send({ url: authUrl });
+  };
+
+  module.exports = {
+    getAuthURL
+  };
