@@ -11,6 +11,7 @@ function App() {
       <Route exact path="/" component={Login} />
       <Route path="/upload/auth" component={Googleauth} />
       <Route exact path="/upload" component={Uploadpage} />
+      <Route path="/api/drive/auth/oauthcallback" component={Googleauth} />
     </Router>
   );
 }

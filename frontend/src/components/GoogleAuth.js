@@ -1,25 +1,52 @@
 import React, { useEffect, useState } from "react";
 import { Button } from "reactstrap";
+import { Redirect } from "react-router-dom";
 import { Grid, Paper } from "@material-ui/core";
 import FacebookServices from "../services/FacebookServices";
+import GoogleServices from "../services/GoogleServices";
 
 export default function Googleauth(props) {
   const [accessToken, setAccessToken] = useState(null);
+  const [tokenReqCode, settokenReqCode] = useState(null);
   const [name, setName] = useState("");
 
   useEffect(() => {
     setAccessToken(localStorage.getItem("token"));
   }, []);
 
-  //get user details from facebook auth server using access token
+  //Get user details from Facebook auth server using access token
   useEffect(() => {
     if (accessToken !== null) {
-      console.log(accessToken);
       FacebookServices.getUserDetails(accessToken).then((data) => {
         setName(data.name);
       });
     }
   }, [accessToken]);
+
+  // Get code param from the URL
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const code = urlParams.get("code");
+    settokenReqCode(code);
+  }, []);
+
+  // Request access token & direct to upload page
+  useEffect(() => {
+    if (tokenReqCode !== null) {
+      GoogleServices.getToken(tokenReqCode).then((data) => {
+        localStorage.setItem("token", JSON.stringify(data));
+      });
+    }
+  }, [tokenReqCode]);
+
+  // Redirect to Google Auth Page
+  const GoogleLoginFunc = (e) => {
+    e.preventDefault();
+    GoogleServices.getAuth().then((data) => {
+      window.location.href = data.url;
+    });
+  };
+
   const paperStyle = {
     padding: 10,
     height: "60vh",
@@ -29,6 +56,7 @@ export default function Googleauth(props) {
 
   return (
     <>
+      {tokenReqCode !== null ? <Redirect to="/upload" /> : null}
       <div className={"container mt-3"} style={{ backgroundColor: "#FDFEFD" }}>
         <Grid>
           <Paper elevation={10} style={paperStyle}>
@@ -71,7 +99,7 @@ export default function Googleauth(props) {
                 <Button
                   color={"warning"}
                   style={{ width: "10rem", height: "10rem" }}
-                  onClick
+                  onClick={GoogleLoginFunc}
                 >
                   <div className="p-3">
                     <h3>
