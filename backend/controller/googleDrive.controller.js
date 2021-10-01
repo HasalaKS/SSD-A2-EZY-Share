@@ -20,7 +20,7 @@ const SCOPE = [
 
 // Get the authorizarion url
 const getAuthURL = async (req, res) => {
-    // generate the authorizarion url
+    // Generate the authorizarion url
     const authUrl = oAuth2Client.generateAuthUrl({
       access_type: "offline",
       scope: SCOPE,
@@ -28,6 +28,19 @@ const getAuthURL = async (req, res) => {
     return res.send({ url: authUrl });
   };
 
+// Get the access token
+const getToken = async (req, res) => {
+    if (req.body.code == null) return res.status(400).send("Invalid Request");
+    // Get access token from the google authorizarion server
+    oAuth2Client.getToken(decodeURIComponent(req.body.code), (err, token) => {
+      if (err) {
+        return res.status(400).send("Error retrieving access token");
+      }
+      return res.send(token);
+    });
+  };
+
   module.exports = {
-    getAuthURL
+    getAuthURL,
+    getToken
   };
