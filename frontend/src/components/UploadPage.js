@@ -2,8 +2,39 @@ import React, { useState } from "react";
 import { Grid, Paper, Button } from "@material-ui/core";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import GoogleServices from "../services/GoogleServices";
 
 export default function Uploadpage(props) {
+  const [file, setFile] = useState("");
+  const [filename, setFilename] = useState("Choose File");
+
+  const onChange = (e) => {
+    setFile(e.target.files[0]);
+    setFilename(e.target.files[0].name);
+  };
+
+  const onSubmit = async (e) => {
+    e.preventDefault();
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("token", localStorage.getItem("token"));
+
+    try {
+      GoogleServices.uploadToDrive(formData).then((data) => {
+        toast.success("Successfully uploaded!", {
+          position: "top-center",
+        });
+        console.log("Success!");
+        const formData = new FormData();
+        setFile("");
+        setFilename("Choose File");
+      });
+    } catch (e) {
+      alert("Upload failed!");
+      console.log(e);
+    }
+  };
+
   const paperStyle = {
     padding: 40,
     height: "70vh",
@@ -22,16 +53,16 @@ export default function Uploadpage(props) {
           </div>
           <div className={"row mt-5"}></div>
 
-          <form onSubmit>
+          <form onSubmit={onSubmit}>
             <div className="custom-file mt-4">
               <input
                 type="file"
                 className="custom-file-input"
                 id="customFile"
-                onChange
+                onChange={onChange}
               />
               <label className="custom-file-label" htmlFor="customFile">
-                Choose File
+                {filename}
               </label>
             </div>
             <input
