@@ -2,26 +2,10 @@ import React, { useEffect, useState } from "react";
 import { Button } from "reactstrap";
 import { Redirect } from "react-router-dom";
 import { Grid, Paper } from "@material-ui/core";
-import FacebookServices from "../services/FacebookServices";
 import GoogleServices from "../services/GoogleServices";
 
 export default function Googleauth(props) {
-  const [accessToken, setAccessToken] = useState(null);
   const [tokenReqCode, settokenReqCode] = useState(null);
-  const [name, setName] = useState("");
-
-  useEffect(() => {
-    setAccessToken(localStorage.getItem("token"));
-  }, []);
-
-  //Get user details from Facebook auth server using access token
-  useEffect(() => {
-    if (accessToken !== null) {
-      FacebookServices.getUserDetails(accessToken).then((data) => {
-        setName(data.name);
-      });
-    }
-  }, [accessToken]);
 
   // Get code param from the URL
   useEffect(() => {
@@ -62,7 +46,7 @@ export default function Googleauth(props) {
           <Paper elevation={10} style={paperStyle}>
             <div className={"row"}>
               <div className={"col-md-12 text-center"}>
-                <h1 className={"mt-3"}>Hi {name}!</h1>
+                <h1 className={"mt-3"}>Hi {localStorage.getItem("fbname")}!</h1>
                 <div className={"d-flex justify-content-center mt-4"}>
                   <p style={{ maxWidth: "600px" }}>
                     <i>
