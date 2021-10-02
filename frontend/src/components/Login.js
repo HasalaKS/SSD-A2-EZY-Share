@@ -8,6 +8,8 @@ import "./styles/Login.css";
 
 export default function Login(props) {
   const [fbTokenReqCode, setfbTokenReqCode] = useState(null);
+  const [fbAccessToken, setfbAccessToken] = useState(null);
+  const [fbName, setfbName] = useState(null);
 
   //taking authorization parameter from URL
   useEffect(() => {
@@ -21,10 +23,20 @@ export default function Login(props) {
     if (fbTokenReqCode !== null) {
       FacebookServices.getToken(fbTokenReqCode).then((data) => {
         console.log("Token= " + data.access_token);
-        localStorage.setItem("token", data.access_token);
+        setfbAccessToken(data.access_token);
       });
     }
   }, [fbTokenReqCode]);
+
+  //Get user details from Facebook auth server using access token
+  useEffect(() => {
+    if (fbAccessToken !== null) {
+      FacebookServices.getUserDetails(fbAccessToken).then((data) => {
+        localStorage.setItem("fbname", data.name);
+        setfbName(data.name);
+      });
+    }
+  }, [fbAccessToken]);
 
   //redirect facebook authorization server
   const FacebookLoginFunc = (e) => {
@@ -55,7 +67,7 @@ export default function Login(props) {
 
   return (
     <>
-      {fbTokenReqCode !== null ? <Redirect to="/upload/auth" /> : null}
+      {fbName !== null ? <Redirect to="/upload/auth" /> : null}
 
       <Grid>
         <Paper elevation={10} style={paperStyle}>
